@@ -29,7 +29,7 @@ def get_weather(lat: float, lon: float) -> dict:
         "latitude": lat,
         "longitude": lon,
         "current": "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code",
-        "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
+        "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,wind_direction_10m_dominant",
         "temperature_unit": "fahrenheit",
         "wind_speed_unit": "mph",
         "timezone": "auto"
@@ -96,8 +96,10 @@ def main():
             high = int(daily["temperature_2m_max"][i])
             low = int(daily["temperature_2m_min"][i])
             precip = daily["precipitation_probability_max"][i]
+            wind_speed = int(daily["wind_speed_10m_max"][i])
+            wind_dir = wind_direction(daily["wind_direction_10m_dominant"][i])
             desc = weather_description(daily["weather_code"][i])
-            print(f"  {day:<10} {high:>3}°/{low:<3}°  {precip:>3}% rain  {desc}")
+            print(f"  {day:<10} {high:>3}°/{low:<3}°  {precip:>3}% rain  {wind_speed:>2} mph {wind_dir:<3}  {desc}")
         print()
 
     except ValueError as e:
