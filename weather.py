@@ -28,7 +28,7 @@ def get_weather(lat: float, lon: float) -> dict:
     params = urllib.parse.urlencode({
         "latitude": lat,
         "longitude": lon,
-        "current": "temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code",
+        "current": "temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code",
         "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
         "temperature_unit": "fahrenheit",
         "wind_speed_unit": "mph",
@@ -63,6 +63,14 @@ def format_day(date_str: str) -> str:
     return date.strftime("%a %m/%d")
 
 
+def wind_direction(degrees: float) -> str:
+    """Convert wind direction degrees to compass direction."""
+    directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    index = round(degrees / 22.5) % 16
+    return directions[index]
+
+
 def main():
     city = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "New York"
 
@@ -77,7 +85,9 @@ def main():
         print(f"  Now: {weather_description(current['weather_code'])}")
         print(f"  Temperature: {current['temperature_2m']}°F")
         print(f"  Humidity: {current['relative_humidity_2m']}%")
-        print(f"  Wind: {current['wind_speed_10m']} mph")
+        direction = wind_direction(current['wind_direction_10m'])
+        print(f"  Wind: {current['wind_speed_10m']} mph {direction}")
+        print(f"  Gusts: {current['wind_gusts_10m']} mph")
 
         print(f"\n  7-Day Forecast")
         print(f"  {'─' * 40}")
